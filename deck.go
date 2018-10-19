@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type deck []string
@@ -23,7 +25,6 @@ func newDeck() deck {
 		}
 	}
 
-	// return deck with all cards
 	return cards
 }
 
@@ -57,4 +58,18 @@ func newDeckFromFile(filename string) deck {
 
 	s := strings.Split(string(bs), ",")
 	return deck(s)
+}
+
+// generate unique int64 as seed for new source obj and use as basis for RNG
+// iterate through deck and get random int between 0 and highest index of deck
+// swap card at index of iteration count with card at index of the random int
+func (d deck) shuffle() {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
+	for i := range d {
+		newPosition := r.Intn(len(d) - 1)
+
+		d[i], d[newPosition] = d[newPosition], d[i]
+	}
 }
